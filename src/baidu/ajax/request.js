@@ -56,7 +56,7 @@ baidu.ajax.request = function (url, opt_options) {
                 var stat = xhr.status;
             } catch (ex) {
                 // 在请求时，如果网络中断，Firefox会无法取得status
-                fire('failure');
+                fire('failure',ex.message);
                 return;
             }
             
@@ -77,7 +77,7 @@ baidu.ajax.request = function (url, opt_options) {
                 || stat == 1223) {
                 fire('success');
             } else {
-                fire('failure');
+                fire('failure',stat);
             }
             
             /*
@@ -136,8 +136,9 @@ baidu.ajax.request = function (url, opt_options) {
      * 
      * @ignore
      * @param {String} type 事件类型
+     * @param {String} msg  提示信息
      */
-    function fire(type) {
+    function fire(type,msg) {
         type = 'on' + type;
         var handler = eventHandlers[type],
             globelHandler = baidu.ajax[type];
@@ -149,7 +150,7 @@ baidu.ajax.request = function (url, opt_options) {
             }
 
             if (type != 'onsuccess') {
-                handler(xhr);
+                handler(xhr,msg);
             } else {
                 //处理获取xhr.responseText导致出错的情况,比如请求图片地址.
                 try {
@@ -229,7 +230,7 @@ baidu.ajax.request = function (url, opt_options) {
             stateChangeHandler();
         }
     } catch (ex) {
-        fire('failure');
+        fire('failure',ex.message);
     }
     
     return xhr;

@@ -237,3 +237,15 @@ test("ontimeout", function() {
 		}
 	});
 });
+
+var test404flag = false;
+baidu.ajax.request('text.php', {
+	onfailure : function(xhr, msg) {
+		if(msg=='404'){
+			test404flag = true;
+		};
+	}
+});
+test("请求失败获得错误信息提示", function() {
+	ok(test404flag,'返回信息是404');
+});
